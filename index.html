@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula: Times de Alta Performance</title>
+    <!-- Carrega o Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Carrega a fonte Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Cor de destaque principal (azul/verde profissional) */
+        :root {
+            --brand-color: #0d9488; /* teal-600 */
+            --brand-color-dark: #115e59; /* teal-800 */
+            --brand-color-light: #f0fdfa; /* teal-50 */
+        }
+        
+        /* Estilos para os Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 220px; /* Altura fixa para os cards */
+            perspective: 1000px; /* Efeito 3D */
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 1rem; /* 16px */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+        }
+        
+        .flip-card-front {
+            background-color: var(--brand-color-light); /* teal-50 */
+            color: var(--brand-color-dark); /* teal-800 */
+        }
+        
+        .flip-card-back {
+            background-color: var(--brand-color); /* teal-600 */
+            color: white;
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Modal de Senha -->
+    <div id="password-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4">
+            <h2 class="text-2xl font-bold text-teal-800 mb-4 text-center">Acesso Restrito</h2>
+            <p class="text-gray-700 mb-5 text-center">Por favor, insira a senha para acessar esta aula.</p>
+            <form id="password-form">
+                <div class="mb-4">
+                    <label for="password-input" class="block text-sm font-medium text-gray-700 mb-1">Senha:</label>
+                    <input type="password" id="password-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500" required>
+                </div>
+                <p id="error-message" class="text-red-600 text-sm text-center mb-4 hidden">Senha incorreta. Tente novamente.</p>
+                <button type="submit" class="w-full bg-teal-600 text-white font-medium px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300">
+                    Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal da Página (Inicialmente Oculto) -->
+    <div id="page-content" class="hidden">
+        <!-- Cabeçalho -->
+        <header class="bg-cover bg-center relative" style="background-image: url('https://i.imgur.com/AMBqqpC.jpeg');">
+            <!-- Sobreposição escura para legibilidade -->
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+            
+            <!-- Conteúdo do Cabeçalho (com z-index para ficar acima da sobreposição) -->
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24 relative z-10 text-center">
+                <h2 class="text-base font-semibold text-teal-300 uppercase tracking-wide">Especialização em Liderança e Gestão em Saúde</h2>
+                <h1 class="text-4xl md:text-5xl font-bold text-white mt-2">Trabalho em equipe e desenvolvimento de times de alta performance</h1>
+                <p class="text-xl text-gray-200 mt-3">Escola de Saúde Pública de Florianópolis</p>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal da Aula -->
+        <main class="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-10">
+
+                <!-- Atividade 1 -->
+                <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 md:p-8">
+                        <!-- Cabeçalho da Atividade -->
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-5">
+                            <h2 class="text-2xl font-bold text-teal-800">1ª Atividade: Modelos de desenvolvimento de times</h2>
+                            <span class="text-sm font-semibold text-teal-700 bg-teal-50 px-4 py-1.5 rounded-full mt-2 sm:mt-0">Duração: 60 minutos</span>
+                        </div>
+                        
+                        <!-- Conteúdo da Atividade -->
+                        <div class="space-y-4 text-gray-700 leading-relaxed">
+                            <p>Assista initially ao vídeo “O que é um Time?”</p>
+                            
+                            <!-- Vídeo Embedado "O que é um Time?" -->
+                            <div class="w-full aspect-video rounded-xl overflow-hidden shadow-md my-4 border border-gray-200">
+                                <iframe
+                                    class="w-full h-full"
+                                    src="https://www.youtube.com/embed/OsSgg9YK3GQ"
+                                    title="YouTube video player - O que é um Time?"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                            
+                            <p>A seguir traremos um vídeo abordando a importância do desenvolvimento de times de alta performance e introduzindo os 3 principais modelos que abordam o fenômeno psicológico, social e comportamental de desenvolvimento de equipes. Eles trazem diferentes abordagens teóricas e diferentes arranjos de organização do processo, mas basicamente são traduções de um mesmo fenômeno. Nesse sentido, quando você tiver que trabalhar visando o desenvolvimento de um time, o apoio de um desses modelos pode ser essencial para prever o comportamento da equipe e para direcioná-la de maneira adequada.</p>
+                            
+                            <!-- Vídeo Embedado -->
+                            <div class="w-full aspect-video rounded-xl overflow-hidden shadow-md my-4 border border-gray-200">
+                                <iframe 
+                                    class="w-full h-full" 
+                                    src="https://www.youtube.com/embed/cwrFYLNbkAk" 
+                                    title="YouTube video player" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+
+                            <!-- Texto antes do botão -->
+                            <p>Após finalizar os vídeos leia o texto de apoio.</p>
+                            
+                            <!-- Botão de Link -->
+                            <a href="https://drive.google.com/file/d/17bn07W4nPbtZvxCtFvf8XMUyARDRt72G/view?usp=sharing" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               class="inline-block bg-teal-600 text-white font-medium px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300 transform hover:-translate-y-0.5 text-center">
+                               Um guia prático para o desenvolvimento de equipes: comparando Tuckman, Cog's Ladder e Drexler-Sibbet
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Atividade 2 -->
+                <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 md:p-8">
+                        <!-- Cabeçalho da Atividade -->
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-5">
+                            <h2 class="text-2xl font-bold text-teal-800">2ª Atividade: Aprofundamento</h2>
+                            <span class="text-sm font-semibold text-gray-600 bg-gray-100 px-4 py-1.5 rounded-full mt-2 sm:mt-0">Opcional, mas recomendado</span>
+                        </div>
+                        
+                        <!-- Conteúdo da Atividade -->
+                        <div class="space-y-4 text-gray-700 leading-relaxed">
+                            <p>Para conhecer cada modelo detalhadamente e as ferramentas de apoio você pode acessar as pastas com os textos (abaixo). A maior parte dos textos originais são em inglês, mas para facilitar colocamos a tradução automática feita com o Google Translate (note que a tradução pode conter imprecisões e distorções gráficas, então use como referência o texto em Inglês sempre que possível).</p>
+                            
+                            <!-- Botões Ativos com os novos links -->
+                            <div class="flex flex-wrap gap-3 my-4">
+                                <a href="https://drive.google.com/drive/folders/1UBfzwV858FRyxHyuCUZC-sycsxwLKKjv?usp=sharing"
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   class="inline-block bg-teal-600 text-white font-medium px-5 py-2 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300 transform hover:-translate-y-0.5">
+                                   Artigos originais em Inglês
+                                </a>
+                                <a href="https://drive.google.com/drive/folders/1Awx9TELCTG2Ykgt8aP4W8k4KyY4E6AGm?usp=sharing"
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   class="inline-block bg-teal-600 text-white font-medium px-5 py-2 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300 transform hover:-translate-y-0.5">
+                                   Artigos traduzidos para o Português
+                                </a>
+                            </div>
+                            
+                            <p>Ações que podem auxiliar a liderança na implementação dos modelos apresentados:</p>
+                            
+                            <!-- Vídeos Lado a Lado -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                                <!-- Vídeo Swift Trust -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">Como construir confiança (Swift Trust)</h3>
+                                    <div class="w-full aspect-video rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe
+                                            class="w-full h-full"
+                                            src="https://www.youtube.com/embed/jXx8CEMENa4"
+                                            title="YouTube video player - Swift Trust"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                </div>
+                                
+                                <!-- Vídeo Normas Comportamentais -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">A importância de estabelecer normas</h3>
+                                    <div class="w-full aspect-video rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe
+                                            class="w-full h-full"
+                                            src="https://www.youtube.com/embed/j27be1B4Qog"
+                                            title="YouTube video player - Normas Comportamentais"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p>Estes dois vídeos são recomendados para quem quiser desenvolver habilidades de manejo de times de alta performance.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Atividade 3 -->
+                <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 md:p-8">
+                        <!-- Cabeçalho da Atividade -->
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-5">
+                            <h2 class="text-2xl font-bold text-teal-800">3ª Atividade: Exercício de gestão de time</h2>
+                            <span class="text-sm font-semibold text-teal-700 bg-teal-50 px-4 py-1.5 rounded-full mt-2 sm:mt-0">Duração: 20 minutos</span>
+                        </div>
+                        
+                        <!-- Conteúdo da Atividade -->
+                        <div class="space-y-4 text-gray-700 leading-relaxed">
+                            <p>Utilizaremos o <a href="https://managementcourses.gumroad.com/l/EANnU" target="_blank" rel="noopener noreferrer" class="text-teal-600 hover:text-teal-700 hover:underline font-medium">modelo proposto pelo Dr. Mike Clayton</a> para avaliação da estruturação e desenvolvimento de times.</p>
+                            <p>Como gestores muitas vezes assumimos a função de liderança de mais de um time ao mesmo tempo, o gestor deve liderar seu time de trabalho formado pelos seus subordinados diretos, mas dependendo dos objetivos da organização o gestor pode ter de formar (sub)times dentre seus subordinados para a execução de tarefas ou missões específicas.</p>
+                            <p>Para esse exercício você deve avaliar o seu time de trabalho (time de que é gestor atual) ou alternativamente um time que você tenha liderado ou um time que faça parte atualmente, para isso utilize o instrumento de avaliação disponível através do link abaixo:</p>
+                            
+                            <!-- Botão de Link -->
+                            <a href="https://forms.gle/iVzxEcFVjUUh1bs49" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               class="inline-block bg-teal-600 text-white font-medium px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300 transform hover:-translate-y-0.5">
+                               Acessar Instrumento de Avaliação
+                            </a>
+                            
+                            <p class="font-medium text-gray-800">A escala de resultado vai de 0 a 48, sendo crescente quanto maior a coesão do grupo na formação de um time de alta performance.</p>
+                            <p>O resultado dessas avaliações será importante para nossa discussão em aula.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Atividade 4 -->
+                <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 md:p-8">
+                        <!-- Cabeçalho da Atividade -->
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-5">
+                            <h2 class="text-2xl font-bold text-teal-800">4ª Atividade: Os 5 T dos grandes treinadores</h2>
+                            <span class="text-sm font-semibold text-gray-600 bg-gray-100 px-4 py-1.5 rounded-full mt-2 sm:mt-0">Opcional, mas recomendado</span>
+                        </div>
+                        
+                        <!-- Conteúdo da Atividade -->
+                        <div class="space-y-4 text-gray-700 leading-relaxed">
+                            <p>A série “The Five T’s of Great Coaches” da Harvard Business Review é composta de 7 vídeos curtos que exploram cinco pilares fundamentais que distinguem treinadores excepcionais, com lições valiosas para líderes em qualquer organização. Os 5 Ts são:</p>
+                            
+                            <!-- Lista dos 5 T's (Flip Cards) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-6">
+        
+                                <!-- Card Talento -->
+                                <div class="flip-card">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front">
+                                            <span class="flex items-center justify-center h-12 w-12 rounded-full bg-teal-200 text-teal-800 font-bold text-2xl mb-3">T</span>
+                                            <h3 class="text-xl font-bold">Talento (Talent)</h3>
+                                        </div>
+                                        <div class="flip-card-back">
+                                            <h3 class="text-lg font-bold mb-2">Talento (Talent)</h3>
+                                            <p class="text-sm">Grandes treinadores identificam e desenvolvem talentos, reconhecendo que habilidades podem ser aprimoradas com o treinamento adequado.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Card Treinamento -->
+                                <div class="flip-card">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front">
+                                            <span class="flex items-center justify-center h-12 w-12 rounded-full bg-teal-200 text-teal-800 font-bold text-2xl mb-3">T</span>
+                                            <h3 class="text-xl font-bold">Treinamento (Training)</h3>
+                                        </div>
+                                        <div class="flip-card-back">
+                                            <h3 class="text-lg font-bold mb-2">Treinamento (Training)</h3>
+                                            <p class="text-sm">O foco está no aprimoramento contínuo por meio de práticas deliberadas e feedback construtivo, visando o desenvolvimento constante.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Card Trabalho em equipe -->
+                                <div class="flip-card">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front">
+                                            <span class="flex items-center justify-center h-12 w-12 rounded-full bg-teal-200 text-teal-800 font-bold text-2xl mb-3">T</span>
+                                            <h3 class="text-xl font-bold">Trabalho em equipe (Teamwork)</h3>
+                                        </div>
+                                        <div class="flip-card-back">
+                                            <h3 class="text-lg font-bold mb-2">Trabalho em equipe (Teamwork)</h3>
+                                            <p class="text-sm">Cultivar um ambiente colaborativo é essencial, onde a confiança e a comunicação eficaz fortalecem o desempenho coletivo.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Card Tenacidade -->
+                                <div class="flip-card">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front">
+                                            <span class="flex items-center justify-center h-12 w-12 rounded-full bg-teal-200 text-teal-800 font-bold text-2xl mb-3">T</span>
+                                            <h3 class="text-xl font-bold">Tenacidade (Tenacity)</h3>
+                                        </div>
+                                        <div class="flip-card-back">
+                                            <h3 class="text-lg font-bold mb-2">Tenacidade (Tenacity)</h3>
+                                            <p class="text-sm">A resiliência e a persistência são incentivadas, preparando a equipe para enfrentar desafios e superar adversidades.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Card Transformação -->
+                                <div class="flip-card">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front">
+                                            <span class="flex items-center justify-center h-12 w-12 rounded-full bg-teal-200 text-teal-800 font-bold text-2xl mb-3">T</span>
+                                            <h3 class="text-xl font-bold">Transformação (Transformation)</h3>
+                                        </div>
+                                        <div class="flip-card-back">
+                                            <h3 class="text-lg font-bold mb-2">Transformação (Transformation)</h3>
+                                            <p class="text-sm">Treinadores excepcionais inspiram mudanças significativas, promovendo o crescimento pessoal e profissional dos membros da equipe.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                            <!-- Fim dos Flip Cards -->
+
+                            <p>Esses princípios, extraídos de práticas esportivas de alto nível, oferecem insights valiosos para líderes que buscam maximizar o potencial de suas equipes no ambiente corporativo. Você pode assistir a essa série através dos vídeos abaixo:</p>
+                            
+                            <!-- Lista de Vídeos Embedados -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-6">
+        
+                                <!-- Vídeo 1: Não é só sobre vencer -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">Não é só sobre vencer.</h3>
+                                    <div class="w-full h-[220px] rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/BAPgB8ZZchs" title="YouTube video player - Não é só sobre vencer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                
+                                <!-- Vídeo 2: Talento -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">Talento</h3>
+                                    <div class="w-full h-[220px] rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/JXWaEeYYJ3g" title="YouTube video player - Talento" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                
+                                <!-- Vídeo 3: Treinamento -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">Treinamento</h3>
+                                    <div class="w-full h-[220px] rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/1cyKA1_Pvus" title="YouTube video player - Treinamento" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                
+                                <!-- Vídeo 4: Trabalho em equipe -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">Trabalho em equipe</h3>
+                                    <div class="w-full h-[220px] rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/GvM2ux38kFQ" title="YouTube video player - Trabalho em equipe" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                
+                                <!-- Vídeo 5: Tenacidade -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">Tenacidade</h3>
+                                    <div class="w-full h-[220px] rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/-LdWD0-OxmI" title="YouTube video player - Tenacidade" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                
+                                <!-- Vídeo 6: Transformação -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">Transformação</h3>
+                                    <div class="w-full h-[220px] rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/-grB_Tb_004" title="YouTube video player - Transformação" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                
+                                <!-- Vídeo 7: Treinadores são realmente necessários? -->
+                                <div class="space-y-2">
+                                    <h3 class="font-semibold text-gray-800">Treinadores são realmente necessários?</h3>
+                                    <div class="w-full h-[220px] rounded-xl overflow-hidden shadow-md border border-gray-200">
+                                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/Cdg0jv12pDE" title="YouTube video player - Treinadores são realmente necessários?" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                            <!-- Fim dos Vídeos Embedados -->
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Atividade 5 -->
+                <section class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-6 md:p-8">
+                        <!-- Cabeçalho da Atividade -->
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-5">
+                            <h2 class="text-2xl font-bold text-teal-800">5ª Atividade: Exercício de Reflexão</h2>
+                            <span class="text-sm font-semibold text-teal-700 bg-teal-50 px-4 py-1.5 rounded-full mt-2 sm:mt-0">Duração: 10 minutos</span>
+                        </div>
+                        
+                        <!-- Conteúdo da Atividade -->
+                        <div class="space-y-4 text-gray-700 leading-relaxed">
+                            <p>Pedimos que você eleja um dos modelos apresentados para pensar em futuramente aplicar para sua equipe. Relembrando, os três modelos apresentados são:</p>
+                            
+                            <ul class="list-disc list-outside space-y-1 pl-6 my-4">
+                                <li>Modelo de Tuckman</li>
+                                <li>Modelo Drexler Sibbert</li>
+                                <li>Modelo da escada de COGs</li>
+                            </ul>
+
+                            <p>Responda ao formulário:</p>
+
+                            <!-- Botão de Link -->
+                            <a href="https://forms.gle/eB5xxPukVvqrSXPv8" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               class="inline-block bg-teal-600 text-white font-medium px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300 transform hover:-translate-y-0.5">
+                               Responder ao Formulário de Reflexão
+                            </a>
+                            
+                            <p>Este material vai ser catalizador para as discussões posteriores em sala de aula.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- Rodapé -->
+        <footer class="bg-gray-800 text-gray-400 mt-12">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+                <p>&copy; 2026 - Escola de Saúde Pública de Florianópolis</p>
+                <p class="text-sm mt-1">Curso de Especialização em Liderança e Gestão em Saúde</p>
+            </div>
+        </footer>
+    </div> <!-- Fim de #page-content -->
+
+    <!-- Script de Verificação de Senha -->
+    <script>
+        document.getElementById('password-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio do formulário
+            
+            const passwordInput = document.getElementById('password-input');
+            const errorMessage = document.getElementById('error-message');
+            const correctPassword = 'esp2025';
+            
+            if (passwordInput.value === correctPassword) {
+                // Senha correta: esconde o modal e mostra o conteúdo
+                document.getElementById('password-modal').classList.add('hidden');
+                document.getElementById('page-content').classList.remove('hidden');
+                errorMessage.classList.add('hidden');
+            } else {
+                // Senha incorreta: mostra mensagem de erro
+                errorMessage.classList.remove('hidden');
+                passwordInput.value = ''; // Limpa o campo
+                passwordInput.focus(); // Foca no campo novamente
+            }
+        });
+    </script>
+
+</body>
+</html>
+
