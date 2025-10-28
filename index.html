@@ -77,32 +77,34 @@
 <body class="bg-gray-50">
 
     <!-- Modal de Senha -->
-    <div id="password-modal" class="fixed inset-0 bg-cover bg-center z-50" style="background-image: url('https://i.imgur.com/AMBqqpC.jpeg');">
+    <div id="password-modal" class="fixed inset-0 bg-cover bg-center z-50" style="background-image: url('https://i.imgur.com/VlJOvj2.jpeg');">
         
         <!-- Sobreposição escura para legibilidade -->
         <div class="absolute inset-0 bg-black opacity-60"></div>
 
         <!-- Conteúdo do Modal (centralizado e acima da sobreposição) -->
-        <div class="relative z-10 p-8 max-w-md w-full mx-4 text-center">
+        <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-8 text-center">
             
-            <!-- Textos Solicitados -->
-            <h2 class="text-base font-semibold text-teal-300 uppercase tracking-wide">Especialização em Liderança e Gestão em Saúde</h2>
-            <h1 class="text-3xl md:text-4xl font-bold text-white mt-2">Desenvolvimento de Times de Alta Performance</h1>
-            <p class="text-lg text-gray-200 mt-3">Escola de Saúde Pública de Florianópolis</p>
-            <p class="text-sm text-gray-300 mt-8 font-medium">Conteúdo restrito aos alunos regularmente matriculados no curso</p>
-            
-            <!-- Formulário -->
-            <form id="password-form" class="mt-6">
-                <p class="text-gray-200 mb-4">Por favor, insira a senha para acessar esta aula</p>
-                <div class="mb-4">
-                    <label for="password-input" class="sr-only">Senha:</label>
-                    <input type="password" id="password-input" placeholder="Digite a senha" class="w-full px-4 py-3 border border-gray-500 rounded-lg shadow-sm bg-gray-800 bg-opacity-50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent" required>
-                </div>
-                <p id="error-message" class="text-red-400 text-sm text-center mb-4 hidden">Senha incorreta. Tente novamente.</p>
-                <button type="submit" class="w-full bg-teal-600 text-white font-medium px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300">
-                    Entrar
-                </button>
-            </form>
+            <div class="max-w-md w-full">
+                <!-- Textos Solicitados -->
+                <h2 class="text-base font-semibold text-teal-300 uppercase tracking-wide">Especialização em Liderança e Gestão em Saúde</h2>
+                <h1 class="text-3xl md:text-4xl font-bold text-white mt-2">Desenvolvimento de Times de Alta Performance</h1>
+                <p class="text-lg text-gray-200 mt-3">Escola de Saúde Pública de Florianópolis</p>
+                <p class="text-sm text-gray-300 mt-8 font-medium">Conteúdo restrito aos alunos regularmente matriculados no curso</p>
+                
+                <!-- Formulário -->
+                <form id="password-form" class="mt-6">
+                    <p class="text-gray-200 mb-4">Por favor, insira a senha para acessar esta aula</p>
+                    <div class="mb-4">
+                        <label for="password-input" class="sr-only">Senha:</label>
+                        <input type="password" id="password-input" placeholder="Digite a senha" class="w-full px-4 py-3 border border-gray-500 rounded-lg shadow-sm bg-gray-800 bg-opacity-50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent" required>
+                    </div>
+                    <p id="error-message" class="text-red-400 text-sm text-center mb-4 hidden">Senha incorreta. Tente novamente.</p>
+                    <button type="submit" class="w-full bg-teal-600 text-white font-medium px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300">
+                        Entrar
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -419,7 +421,7 @@
                                 </div>
                                 
                                 <!-- Vídeo 7: Treinadores são realmente necessários? -->
-                                <div class="space-y-2">
+                                <div classs="space-y-2">
                                     <h3 class="font-semibold text-gray-800">Treinadores são realmente necessários? (3:16)</h3>
                                     <div class="w-full h-[220px] rounded-xl overflow-hidden shadow-md border border-gray-200">
                                         <iframe class="w-full h-full" src="https://www.youtube.com/embed/Cdg0jv12pDE" title="YouTube video player - Treinadores são realmente necessários?" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -503,5 +505,4 @@
 
 </body>
 </html>
-
 
